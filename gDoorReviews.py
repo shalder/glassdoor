@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import time
 import requests
 from bs4 import  BeautifulSoup
 import pandas as pd
@@ -8,7 +8,7 @@ from userAgents import user_agents, randomUserAgents
 
 url = 'https://www.glassdoor.com/Reviews/Snap-Reviews-E671946.htm'
 head = randomUserAgents()
-
+start = time.time()
 
 def soup(url,headers):
     ''' url = full glassdoor.com/reviews url'''
@@ -17,23 +17,27 @@ def soup(url,headers):
     bs = BeautifulSoup(req.text, 'html.parser')
     return bs
 
-
 pages = set()
 def getPages(url, head):
     ''' Gets a set of ALL "Next Page" hrefs '''
     global pages
     bs = soup(url, head)
-    nextPage = bs.find('div',{'class',"flex-grid tbl margTop"}).findAll('a')
-    for link in nextPage:
+    nextPage = bs.find('div',{'class',"flex-grid tbl margTop"})
+    for link in nextPage.findAll('a'):
         if 'href' in link.attrs:
             url = 'https://glassdoor.com{}'.format(link.attrs['href'])
             if url not in pages:
             #new page
                 pages.add(url)
-                getPages(url, head)
+    #get last page
+    for lastPage in nextPage.findAll('li',{'class':'page last'}):
+        lastPage = 'https://glassdoor.com{}'.format(lastPage.a['href'])
+        getPages(lastPage, head)
     return pages
 
 
+print(getPages(url, head))
+print(start - time.time())
 a=[]
 date=[]
 revNo=[]
@@ -164,5 +168,7 @@ df['comBenefitsStar']=review
 df['srManagementStar']=review
 df['reviewLink']=link
 
+print(start - time.time())
 csvName = input('What do you want to call the csv?')
 df.to_csv('{}.csv'.format(csvName), sep=',')
+
