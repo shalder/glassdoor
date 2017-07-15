@@ -9,12 +9,9 @@ from userAgents import user_agents, randomUserAgents
 url = 'https://www.glassdoor.com/Reviews/Snap-Reviews-E671946.htm'
 head = randomUserAgents()
 
-<<<<<<< HEAD
+
 def soup(url,headers):
     ''' url = full glassdoor.com/reviews url'''
-=======
-def soup(url,ext,headers):
->>>>>>> ab4c6a14e7c25d8a3ef3f05469722783a2bee4b2
     session = requests.Session()
     req = session.get(url, headers=headers)
     bs = BeautifulSoup(req.text, 'html.parser')
