@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+import os
+import requests
+from urllib.request import urlretrieve
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+
+def soup(url,headers):
+    ''' url = glassdoor.com exten='/Reviews/Brierley-and-Partners-Reviews-E9540.htm'''
+    session = requests.Session()
+    address = url
+    req = session.get(address, headers=headers)
+    bs = BeautifulSoup(req.text, 'html.parser')
+    return bs
+
+url = "https://www.glassdoor.com/Reviews/Snap-Reviews-E671946.htm"
+head = {"User-Agent":"Mozilla/5.0  (Macintosh; Intel   Mac OS\
+            X   10_9_5) AppleWebKit 537.36  (KHTML, like    Gecko)\
+              Chrome","Accept":"text/html,application/xhtml+xml,\
+              application/xmlq=0.9,image/webp,*/*;q=0.8"}
+
+pages = set()
+def getPages(url, head):
+    global pages
+    bs = soup(url, head)
+    nextPage = bs.find('div',{'class',"flex-grid tbl margTop"}).findAll('a')
+    for link in nextPage:
+        if 'href' in link.attrs:
+            url = 'https://glassdoor.com{}'.format(link.attrs['href'])
+            if url not in pages:
+            #new page
+                pages.add(url)
+                getPages(url, head)
+    return pages
+
