@@ -5,6 +5,7 @@ from bs4 import  BeautifulSoup
 import pandas as pd
 from urllib.request import urlopen
 from userAgents import user_agents, randomUserAgents
+import lxml
 
 url = 'https://www.glassdoor.com/Reviews/Snap-Reviews-E671946.htm'
 head = randomUserAgents()
@@ -14,7 +15,7 @@ def soup(url,headers):
     ''' url = full glassdoor.com/reviews url'''
     session = requests.Session()
     req = session.get(url, headers=headers)
-    bs = BeautifulSoup(req.text, 'html.parser')
+    bs = BeautifulSoup(req.text, 'lxml')
     return bs
 
 pages = set()
@@ -35,9 +36,8 @@ def getPages(url, head):
         getPages(lastPage, head)
     return pages
 
+startTime = start - time.time()
 
-print(getPages(url, head))
-print(start - time.time())
 a=[]
 date=[]
 revNo=[]
@@ -168,7 +168,6 @@ df['comBenefitsStar']=review
 df['srManagementStar']=review
 df['reviewLink']=link
 
-print(start - time.time())
 csvName = input('What do you want to call the csv?')
 df.to_csv('{}.csv'.format(csvName), sep=',')
-
+print('StartTime = {}\nEnd Time = {}'.format(startTime, start - time.time()))
