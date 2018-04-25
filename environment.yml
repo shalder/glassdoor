@@ -1,5 +1,5 @@
 # This file may be used to create an environment using:
-# gdoorScraper
+# Glass Door Scraper
 # $ conda create --name <env> --file <this file>
 # platform: linux-64
 asn1crypto                0.22.0                   py36_0  
